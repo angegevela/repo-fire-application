@@ -16,9 +16,10 @@ def map_station(request):
 
     for fs in fireStations:
         fs['latitude'] = float(fs['latitude'])
-        fs['longitude'] = float(fs['longitude'])  
+        fs['longitude'] = float(fs['longitude'])
+        fireStations_list.append(fs)
 
     context = {
-        'fireStations': fireStations_list, 
+        'fireStations': fireStations_list,
     }
     return render(request, 'map_station.html', context)
