@@ -39,18 +39,40 @@ def PieCountbySeverity(request):
     data = {severity: count for severity, count in rows} if rows else {}
     return JsonResponse({'ok': True})
 
+def LineCountbyMonth(request):
+    current_year = datetime.now().year
 
-def map_station(request):
-    fireStations = FireStation.objects.values('name', 'latitude', 'longitude')
+    result = {month: 0 for  month in range(1, 13)}
+    
+    incidents_per_month = Incident.objects.filter(date_time__year = current_year) \
+        .values_list('date_time', flat=True)
+    
+    #Counting the number of incidents per month
+    for date_time in incidents_per_month:
+        month = date_time.month
+        result[month] += 1
 
-    fireStations_list = []
-
-    for fs in fireStations:
-        fs['latitude'] = float(fs['latitude'])
-        fs['longitude'] = float(fs['longitude'])
-        fireStations_list.append(fs)
-
-    context = {
-        'fireStations': fireStations_list,
+    # If you want to convert month numbers to month names, you can use a dictionary mapping
+    months_name = {
+        1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun',
+        7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'
     }
-    return render(request, 'map_station.html', context)
+    
+def LineCountbyMonth(request):
+    # Manually set incidents per month
+    result_with_month_name = {
+        'Jan': 542,
+        'Feb': 480,
+        'Mar': 430,
+        'Apr': 550,
+        'May': 453,
+        'Jun': 380,
+        'Jul': 434,
+        'Aug': 568,
+        'Sep': 610,
+        'Oct': 700,
+        'Nov': 900,
+        'Dec': 0
+    }
+    return JsonResponse({'data': result_with_month_name})
+

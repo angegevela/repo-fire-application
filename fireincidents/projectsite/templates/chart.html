@@ -8,13 +8,17 @@
       </div>
       
     <div class="row">
+    <div class="col-md-6">
         <div class="card">
+            <div class="card-header">
+                <div class="card-title">Line Chart</div>
+            </div>
             <div class="card-body">
                 <div class="chart-container">
-                    <canvas id="lineChart"></canvas>
+                    <canvas id="lineChart" style="width: 100%; height: 400px;"></canvas>
                 </div>
             </div>
-        </div>
+        </div> 
     </div>
     <div class="col-md-6">
         <div class="card">
@@ -118,6 +122,7 @@
         </div>
     </div>
 </div>
+</div>
 {% endblock %} {% block chart %}
 <!--new charts code-->
 <script>
@@ -173,17 +178,19 @@
                 });
             })
             .catch((error) => console.error("Error:", error));
-                   //lineChart
-        fetch("/lineChart/")
-        .then((response) => response.json())
-        .then((result_with_month_names) => {
-            var months = Object.keys(result_with_month_names);
-            var counts = Object.values(result_with_month_names);
-            var lineChart = document.getElementById("lineChart").getContext("2d");
-            new Chart(lineChart, {
+//lineChart
+fetch("/lineChart/")
+    .then((response) => response.json())
+    .then((res) => {
+        var result_with_month_names = res.data;
+        var months = Object.keys(result_with_month_names);
+        var counts = Object.values(result_with_month_names);
+
+        var lineChart = document.getElementById("lineChart").getContext("2d");
+        new Chart(lineChart, {
             type: 'line',
             data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                labels: months,
                 datasets: [
                     {
                         label: "Active Users",
@@ -228,12 +235,6 @@
     })
     .catch((error) => console.error("Error:", error));
 
-    // multiLine
-    fetch("/multilineChart/")
-    .then((response) => response.json())
-    .then((result_with_month_names) => {
-
-    })
     }
 
     loadChartData();
