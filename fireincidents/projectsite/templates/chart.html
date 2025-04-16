@@ -417,6 +417,99 @@ fetch("/multilineChart/")
         });
     })
     .catch((error) => console.error("Error:", error));
+//multiBarChart
+// multiBarChart
+fetch("/multiBarChart/")
+    .then((response) => response.json())
+    .then((result_with_month_names) => {
+        // Example assumption: result_with_month_names = { "Major": {...}, "Minor": {...}, "Moderate": {...} }
+        var severityLevels = Object.keys(result_with_month_names); // Dynamically get severity levels
+
+        var incidentCount_major = [];
+        var incidentCounts_minor = [];
+        var incidentCounts_moderate = [];
+
+        // Sort function to sort object keys by month (assuming keys are "1", "2", ..., "12")
+        function sortObjectKeys(obj) {
+            return Object.keys(obj).sort((a, b) => parseInt(a) - parseInt(b));
+        }
+
+        if (severityLevels.includes("Major")) {
+            var sl_major = result_with_month_names["Major"];
+            var sortedKeysMajor = sortObjectKeys(sl_major);
+            incidentCount_major = sortedKeysMajor.map((key) => sl_major[key]);
+        }
+
+        if (severityLevels.includes("Minor")) {
+            var sl_minor = result_with_month_names["Minor"];
+            var sortedKeysMinor = sortObjectKeys(sl_minor);
+            incidentCounts_minor = sortedKeysMinor.map((key) => sl_minor[key]);
+        }
+
+        if (severityLevels.includes("Moderate")) {
+            var sl_moderate = result_with_month_names["Moderate"];
+            var sortedKeysModerate = sortObjectKeys(sl_moderate);
+            incidentCounts_moderate = sortedKeysModerate.map((key) => sl_moderate[key]);
+        }
+
+        // Create chart after data is ready
+        var multiBarChart = document.getElementById("multipleBarChart").getContext("2d");
+
+        new Chart(multiBarChart, {
+            type: "bar",
+            data: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                datasets: [
+                    {
+                        label: "Minor Fire",
+                        backgroundColor: "#59d05d",
+                        borderColor: "#59d05d",
+                        data: incidentCounts_minor,
+                    },
+                    {
+                        label: "Moderate Fire",
+                        backgroundColor: "#fdaf4b",
+                        borderColor: "#fdaf4b",
+                        data: incidentCounts_moderate,
+                    },
+                    {
+                        label: "Major Fire",
+                        backgroundColor: "#177dff",
+                        borderColor: "#177dff",
+                        data: incidentCount_major,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: "bottom",
+                },
+                title: {
+                    display: true,
+                    text: "Fire Incidents by Severity Level",
+                },
+                tooltips: {
+                    mode: "index",
+                    intersect: false,
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            stacked: true,
+                        },
+                    ],
+                    yAxes: [
+                        {
+                            stacked: true,
+                        },
+                    ],
+                },
+            },
+        });
+    })
+    .catch((error) => console.error("Error:", error));
 
     }
 
@@ -431,7 +524,7 @@ fetch("/multilineChart/")
     radarChart = document.getElementById("radarChart").getContext("2d"),
     bubbleChart = document.getElementById("bubbleChart").getContext("2d"),
     // multipleLineChart = document.getElementById("multipleLineChart").getContext("2d"),
-    multipleBarChart = document.getElementById("multipleBarChart").getContext("2d"),
+    // multipleBarChart = document.getElementById("multipleBarChart").getContext("2d"),
     htmlLegendChart = document.getElementById("htmlLegendChart").getContext("2d");
  
 // var myLineChart = new Chart(document.getElementById('myChart'), {  // make sure you pass the canvas element's ID here
@@ -705,56 +798,56 @@ var myBubbleChart = new Chart(bubbleChart, {
 //     },
 // });
 
-var myMultipleBarChart = new Chart(multipleBarChart, {
-    type: 'bar',
-    data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [
-            {
-                label: "First time visitors",
-                backgroundColor: "#559045d",
-                borderColor: "#559045d",
-                data: [95, 100, 112, 101, 144, 159, 178, 156, 188, 190, 210, 245],
-            },
-            {
-                label: "Visitors",
-                backgroundColor: "#ef6d4b",
-                borderColor: "#ef6d4b",
-                data: [145, 256, 244, 233, 210, 279, 287, 299, 312, 356],
-            },
-            {
-                label: "Pageview",
-                backgroundColor: "#97d1f4",
-                borderColor: "#97d1f4",
-                data: [185, 279, 273, 287, 214, 322, 286, 301, 320, 346, 399],
-            },
-        ],
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            position: "bottom",
-        },
-        title: {
-            display: true,
-            text: "Traffic Stats",
-        },
-        tooltips: {
-            mode: "index",
-            intersect: false,
-        },
-        responsive: true,
-        scales: {
-            xAxes: [{
-                stacked: true,
-            }],
-            yAxes: [{
-                stacked: true,
-            }],
-        },
-    },
-});
+// var myMultipleBarChart = new Chart(multipleBarChart, {
+//     type: 'bar',
+//     data: {
+//         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+//         datasets: [
+//             {
+//                 label: "First time visitors",
+//                 backgroundColor: "#559045d",
+//                 borderColor: "#559045d",
+//                 data: [95, 100, 112, 101, 144, 159, 178, 156, 188, 190, 210, 245],
+//             },
+//             {
+//                 label: "Visitors",
+//                 backgroundColor: "#ef6d4b",
+//                 borderColor: "#ef6d4b",
+//                 data: [145, 256, 244, 233, 210, 279, 287, 299, 312, 356],
+//             },
+//             {
+//                 label: "Pageview",
+//                 backgroundColor: "#97d1f4",
+//                 borderColor: "#97d1f4",
+//                 data: [185, 279, 273, 287, 214, 322, 286, 301, 320, 346, 399],
+//             },
+//         ],
+//     },
+//     options: {
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         legend: {
+//             position: "bottom",
+//         },
+//         title: {
+//             display: true,
+//             text: "Traffic Stats",
+//         },
+//         tooltips: {
+//             mode: "index",
+//             intersect: false,
+//         },
+//         responsive: true,
+//         scales: {
+//             xAxes: [{
+//                 stacked: true,
+//             }],
+//             yAxes: [{
+//                 stacked: true,
+//             }],
+//         },
+//     },
+// });
 // Chart with HTML Legends
 
 var gradientStroke = htmlLegendsChart.createLinearGradient(500, 0, 100, 0);
