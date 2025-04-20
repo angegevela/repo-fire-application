@@ -42,12 +42,12 @@ def PieCountbySeverity(request):
 def LineCountbyMonth(request):
     current_year = datetime.now().year
 
-    result = {month: 0 for  month in range(1, 13)}
+    result = {month: 0 for month in range(1, 13)}
     
-    incidents_per_month = Incident.objects.filter(date_time__year = current_year) \
+    incidents_per_month = Incident.objects.filter(date_time__year=current_year) \
         .values_list('date_time', flat=True)
     
-    #Counting the number of incidents per month
+    # Counting the number of incidents per month
     for date_time in incidents_per_month:
         month = date_time.month
         result[month] += 1
@@ -57,24 +57,14 @@ def LineCountbyMonth(request):
         1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun',
         7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'
     }
-    
-def LineCountbyMonth(request):
-    # Manually set incidents per month
-    result_with_month_name = {
-        'Jan': 542,
-        'Feb': 480,
-        'Mar': 430,
-        'Apr': 550,
-        'May': 453,
-        'Jun': 380,
-        'Jul': 434,
-        'Aug': 568,
-        'Sep': 610,
-        'Oct': 700,
-        'Nov': 900,
-        'Dec': 0
+
+    # Creating the result with month names instead of numbers
+    result_with_month_names = {
+        months_name[month]: count for month, count in result.items()
     }
-    return JsonResponse({'data': result_with_month_name})
+
+    return JsonResponse(result_with_month_names)
+
 
 
 def MultilineIncidentTop3Country(request):
@@ -175,6 +165,97 @@ def multiBarbySeverity(request):
         result[level] = dict(sorted(result[level].items()))
     return JsonResponse(result)
 
+def DoughnutChart(request):
+    query = '''
+    SELECT severity_level, COUNT(*) as count
+    FROM fire_incident
+    GROUP BY severity_level
+    '''
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+    labels = []
+    data = []
+    background_colors = ["#1f353d", "#f1a648", "#1fda73", "#fa709a"]  # Expand if more levels
+
+    for i, (severity, count) in enumerate(rows):
+        labels.append(severity)
+        data.append(count)
+
+    chart_data = {
+        "labels": labels,
+        "datasets": [{
+            "data": data,
+            "backgroundColor": background_colors[:len(labels)]
+        }]
+    }
+
+    return JsonResponse(chart_data)
+
+def RadarChart(request):
+    # Simulated categories and values
+    categories = ["Rescue", "Suppression", "Evacuation", "Drills", "Investigation"]
+    team1_data = [20, 25, 15, 10, 30]
+    team2_data = [15, 20, 20, 15, 25]
+
+    data = {
+        "labels": categories,
+        "datasets": [
+            {
+                "label": "Team A",
+                "data": team1_data,
+                "borderColor": "#1f7daf",
+                "backgroundColor": "rgba(29, 122, 243, 0.25)",
+                "pointBackgroundColor": "#1f7daf"
+            },
+            {
+                "label": "Team B",
+                "data": team2_data,
+                "borderColor": "#71f6ac",
+                "backgroundColor": "rgba(113, 246, 172, 0.25)",
+                "pointBackgroundColor": "#71f6ac"
+            }
+        ]
+    }
+    return JsonResponse(data)
+def BubbleChart(request):
+    # Simulated data; replace with actual queries if applicable
+    data = {
+        "datasets": [
+            {
+                "label": "Cars",
+                "data": [
+                    {"x": 10, "y": 20, "r": 15},
+                    {"x": 15, "y": 10, "r": 20},
+                    {"x": 20, "y": 30, "r": 25}
+                ],
+                "backgroundColor": "#71c7ca"
+            },
+            {
+                "label": "Motorcycles",
+                "data": [
+                    {"x": 5, "y": 15, "r": 10},
+                    {"x": 25, "y": 10, "r": 18},
+                    {"x": 30, "y": 25, "r": 22}
+                ],
+                "backgroundColor": "#1df3f3"
+            }
+        ]
+    }
+    return JsonResponse(data)
+
+
+def barChart(request):
+    data = {
+        "labels": [
+            "Jan", "Feb", "Mar", "Apr",
+            "May", "Jun", "Jul", "Aug",
+            "Sep", "Oct", "Nov", "Dec"
+        ],
+        "data": [12, 9, 15, 20, 14, 17, 22, 19, 13, 11, 16, 18]  
+    }
+    return JsonResponse(data)
 
 #fire incident code view
 def map_station(request):

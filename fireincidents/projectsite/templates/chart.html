@@ -21,18 +21,19 @@
             </div> 
         </div>
 
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">Bar Chart</div>
-            </div>
-            <div class="card-body">
-                <div class="chart-container">
-                    <canvas id="barChart" style="width: 100%; height: 400px;"></canvas>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Bar Chart</div>
                 </div>
-            </div>
-        </div> 
-    </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="barChart" style="width: 100%; height: 400px;"></canvas>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        
 
     <div class="col-md-6">
         <div class="card">
@@ -42,6 +43,18 @@
             <div class="card-body">
                 <div class="chart-container">
                     <canvas id="pieChart" style="width: 100%; height: 400px;"></canvas>
+                </div>
+            </div>
+        </div> 
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Doughnut Chart</div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="doughnutChart" style="width: 100%; height: 400px;" ></canvas>
                 </div>
             </div>
         </div> 
@@ -108,7 +121,7 @@
                     Charts provide a generateLegend() method on ther prototype that returns an HTML string for an legend.
                 </div>
                 <div class="chart-container">
-                    <canvas id="myChartLegend" style="width: 100%; height: 400px;"></canvas>
+                    <canvas id="myChartLegend"></canvas>
                 </div>
             </div>
         </div> 
@@ -172,16 +185,16 @@
 //lineChart
 fetch("/lineChart/")
     .then((response) => response.json())
-    .then((res) => {
-        var result_with_month_names = res.data;
+    .then((result_with_month_names) => {   
         var months = Object.keys(result_with_month_names);
         var counts = Object.values(result_with_month_names);
-
+        var counts = [15, 25, 35, 40, 60, 70, 80, 900, 85, 75, 60, 50];
         var lineChart = document.getElementById("lineChart").getContext("2d");
+
         new Chart(lineChart, {
             type: 'line',
             data: {
-                labels: months,
+                labels: months, 
                 datasets: [
                     {
                         label: "Active Users",
@@ -202,21 +215,23 @@ fetch("/lineChart/")
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                legend: {
-                    position: "bottom",
-                    labels: {
-                        padding: 10,
-                        fontColor: "#1d7af3",
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            padding: 10,
+                            color: "#1d7af3",
+                        },
                     },
-                },
-                tooltips: {
-                    bodySpacing: 4,
-                    mode: "nearest",
-                    intersect: 0,
-                    position: "nearest",
-                    xPadding: 10,
-                    yPadding: 10,
-                    caretPadding: 10,
+                    tooltips: {
+                        bodySpacing: 4,
+                        mode: "nearest",
+                        intersect: 0,
+                        position: "nearest",
+                        xPadding:10,
+                        ypadding: 10,
+                        caretPadding: 10,
+                    },
                 },
                 layout: {
                     padding: { left: 15, right: 15, top: 15, bottom: 15 },
@@ -225,36 +240,37 @@ fetch("/lineChart/")
         });
     })
     .catch((error) => console.error("Error:", error));
+
 //multiline
     fetch("/multilineChart/")
     .then((response) => response.json())
     .then((result_with_month_names) => {
         var countries = Object.keys(result_with_month_names);
-        // Extract incidents counts for each country
-        var incidentCounts = [];
-        var incidentCounts2 = [];
-        var incidentCounts3 = [];
+        var incidentCounts = [30, 45, 68, 69, 90, 100, 158, 177, 200, 245, 256, 0];
+        var incidentCounts2 = [10, 20, 55, 75, 80, 48, 59, 55, 23, 107, 60, 871];
+        var incidentCounts3 = [10, 30, 58, 79, 90, 115, 117, 160, 185, 210, 185, 194];
+
 
         //Sort Function to sort object keys by month
         function sortObjectKeys(obj){
             return Object.keys(obj).sort((a,b) => parseInt(a) - parseInt(b));
         }
 
-        if (countries.length >= 1){
-            var country1_data = result_with_month_names[countries[0]];
-            var sortedKeys1 = sortObjectKeys(country1_data);
-            incidentCounts = sortedKeys1.map((key) => country1_data[key]);
-        }
-        if (countries.length >= 2){
-            var country2_data = result_with_month_names[countries[1]];
-            var sortedKeys2 = sortObjectKeys(country2_data);
-            incidentCounts2 = sortedKeys1.map((key) => country2_data[key]);
-        }
-        if (countries.length >= 3){
-            var country3_data = result_with_month_names[countries[2]];
-            var sortedKeys3 = sortObjectKeys(country3_data);
-            incidentCounts3 = sortedKeys2.map((key) => country2_data[key]);
-        }
+        // if (countries.length >= 1){
+        //     var country1_data = result_with_month_names[countries[0]];
+        //     var sortedKeys1 = sortObjectKeys(country1_data);
+        //     incidentCounts = sortedKeys1.map((key) => country1_data[key]);
+        // }
+        // if (countries.length >= 2){
+        //     var country2_data = result_with_month_names[countries[1]];
+        //     var sortedKeys2 = sortObjectKeys(country2_data);
+        //     incidentCounts2 = sortedKeys1.map((key) => country2_data[key]);
+        // }
+        // if (countries.length >= 3){
+        //     var country3_data = result_with_month_names[countries[2]];
+        //     var sortedKeys3 = sortObjectKeys(country3_data);
+        //     incidentCounts3 = sortedKeys2.map((key) => country3_data[key]);
+        // }
 
         new Chart(multipleLineChart, {
         type: 'line',
@@ -329,100 +345,22 @@ fetch("/lineChart/")
     });
     })
     .catch((error) => console.error("Error:", error));
-//multiline
-fetch("/multilineChart/")
-    .then((response) => response.json())
-    .then((result_with_month_names) => {
-        var countries = Object.keys(result_with_month_names);
-        var incidentCounts = [];
-        var incidentCounts2 = [];
-        var incidentCounts3 = [];
 
-        function sortObjectKeys(obj){
-            return Object.keys(obj).sort((a,b) => parseInt(a) - parseInt(b));
-        }
-
-        if (countries.length >= 1){
-            var country1_data = result_with_month_names[countries[0]];
-            var sortedKeys1 = sortObjectKeys(country1_data);
-            incidentCounts = sortedKeys1.map((key) => country1_data[key]);
-        }
-        if (countries.length >= 2){
-            var country2_data = result_with_month_names[countries[1]];
-            var sortedKeys2 = sortObjectKeys(country2_data);
-            incidentCounts2 = sortedKeys2.map((key) => country2_data[key]);
-        }
-        if (countries.length >= 3){
-            var country3_data = result_with_month_names[countries[2]];
-            var sortedKeys3 = sortObjectKeys(country3_data);
-            incidentCounts3 = sortedKeys3.map((key) => country3_data[key]);
-        }
-
-        const multipleLineChart = document.getElementById("multipleLineChart").getContext("2d");
-
-        new Chart(multipleLineChart, {
-            type: 'line',
-            data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                datasets: [
-                    {
-                        label: countries[0],
-                        borderColor: '#1d7af3',
-                        pointBackgroundColor: 'rgba(255, 0, 0, 0.3)',
-                        pointBorderColor: '#1d7af3',
-                        pointHoverRadius: 1,
-                        fill: true,
-                        borderWidth: 2,
-                        data: incidentCounts,
-                    },
-                    {
-                        label: countries[1],
-                        borderColor: '#e59d05d',
-                        pointBackgroundColor: 'rgba(255, 149, 0, 0.3)',
-                        pointBorderColor: '#e59d05d',
-                        pointHoverRadius: 1,
-                        fill: true,
-                        borderWidth: 2,
-                        data: incidentCounts2,
-                    },
-                    {
-                        label: countries[2],
-                        borderColor: "#f3545d",
-                        pointBorderColor: "#FFF",
-                        pointBackgroundColor: "#f3545d",
-                        pointBorderWidth: 2,
-                        pointHoverRadius: 4,
-                        fill: true,
-                        borderWidth: 2,
-                        data: incidentCounts3,
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                legend: {
-                    position: 'top',
-                },
-                tooltips: {
-                    bodySpacing: 4,
-                    mode: 'nearest',
-                    intersect: 0,
-                    destination: 'canvas',
-                },
-                layout: {
-                    padding: { left: 15, right: 15, top: 15, bottom: 15 },
-                },
-            },
-        });
-    })
-    .catch((error) => console.error("Error:", error));
-//multiBarChart
 // multiBarChart
 fetch("/multiBarChart/")
     .then((response) => response.json())
     .then((result_with_month_names) => {
-        // Example assumption: result_with_month_names = { "Major": {...}, "Minor": {...}, "Moderate": {...} }
+        var result_with_month_names = {
+    "Minor": {
+        "1": 18, "2": 10, "3": 30, "4": 10, "5": 60, "6": 30, "7": 5, "8": 3, "9": 4, "10": 6, "11": 7, "12": 3
+    },
+    "Moderate": {
+        "1": 20, "2": 10, "3": 24, "4": 35, "5": 8, "6": 25, "7": 2, "8": 2, "9": 3, "10": 1, "11": 2, "12": 1
+    },
+    "Major": {
+        "1": 1, "2": 0, "3": 67, "4": 10, "5": 15, "6": 15, "7": 1, "8": 1, "9": 0, "10": 1, "11": 1, "12": 0
+    }
+};
         var severityLevels = Object.keys(result_with_month_names); // Dynamically get severity levels
 
         var incidentCount_major = [];
@@ -511,6 +449,161 @@ fetch("/multiBarChart/")
     })
     .catch((error) => console.error("Error:", error));
 
+
+// radar chart
+fetch("/radar/")
+    .then((response) => response.json())
+    .then((radarData) => {
+        var radarChart = document.getElementById("radarChart").getContext("2d");
+
+        new Chart(radarChart, {
+            type: "radar",
+            data: {
+                labels: radarData.labels,
+                datasets: radarData.datasets,
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        fontColor: "rgb(154, 154, 154)",
+                        fontSize: 11,
+                        usePointStyle: true,
+                        padding: 20,
+                    },
+                },
+                scale: {
+                    ticks: {
+                        beginAtZero: true,
+                    },
+                },
+                layout: {
+                    padding: {
+                        left: 20,
+                        right: 20,
+                        top: 20,
+                        bottom: 20,
+                    },
+                },
+            },
+        });
+    })
+    .catch((error) => console.error("Radar Chart Error:", error));
+
+// bubble chart
+fetch("/bubble/")
+    .then((response) => response.json())
+    .then((bubbleData) => {
+        var bubbleChart = document.getElementById("bubbleChart").getContext("2d");
+
+        new Chart(bubbleChart, {
+            type: "bubble",
+            data: {
+                datasets: bubbleData.datasets,
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        fontColor: "rgb(154, 154, 154)",
+                        fontSize: 11,
+                        usePointStyle: true,
+                        padding: 20,
+                    },
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "X Axis",
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "Y Axis",
+                        },
+                    },
+                },
+                layout: {
+                    padding: {
+                        left: 20,
+                        right: 20,
+                        top: 20,
+                        bottom: 20,
+                    },
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.dataset.label || '';
+                                var x = context.raw.x;
+                                var y = context.raw.y;
+                                var r = context.raw.r;
+                                return `${label}: (x: ${x}, y: ${y}, r: ${r})`;
+                            }
+                        }
+                    }
+                }
+            },
+        });
+    })
+    .catch((error) => console.error("Bubble Chart Error:", error));
+
+// bar chart
+fetch('barChart')
+  .then(response => response.json())
+  .then(data => {
+    const ctx = document.getElementById("barChart").getContext("2d");
+
+    const barChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.labels,
+        datasets: [
+          {
+            label: "Fire Incidents per Month",
+            backgroundColor: "#f87171", 
+            borderColor: "#b91c1c", 
+            data: data.data
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: "Monthly Fire Incidents"
+        }
+      }
+    });
+  })
+    .catch((error) => console.error("Error:", error));
+//dougnut chart
+fetch("/doughnut/")
+    .then((response) => response.json())
+    .then((data) => {
+        new Chart(document.getElementById("doughnutChart"), {
+      type: 'doughnut',
+      data: {
+        labels: ['Mainland Luzon', 'Palawan', 'Visayaz'],
+        datasets: [{
+          data: [5, 10, 7],
+          backgroundColor: ['#1f353d', '#f1a648', '#1fda73']
+        }]
+      }
+    });
+    })
+    .catch((error) => console.error("Error fetching doughnut data:", error));
+
+
     }
 
     loadChartData();
@@ -575,28 +668,28 @@ fetch("/multiBarChart/")
 //     },
 // });
 
-var myBarChart = new ChartBarChart({
-    type: "bar",
-    data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-            label: "sales",
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-            data: [21, 15, 22, 12, 25, 21, 15, 8, 6, 7, 41],
-        }],
-    },
-    options: {
-        maintainAspectRatio: true,
-        responsive: false,
-        scales: {
-            xAxes: [{
-                beginAtZero: true,
-            }],
-        },
-    },
-});
+// var myBarChart = new ChartBarChart({
+//     type: "bar",
+//     data: {
+//         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+//         datasets: [{
+//             label: "sales",
+//             backgroundColor: "rgba(75, 192, 192, 0.2)",
+//             borderColor: "rgba(75, 192, 192, 1)",
+//             borderWidth: 1,
+//             data: [21, 15, 22, 12, 25, 21, 15, 8, 6, 7, 41],
+//         }],
+//     },
+//     options: {
+//         maintainAspectRatio: true,
+//         responsive: false,
+//         scales: {
+//             xAxes: [{
+//                 beginAtZero: true,
+//             }],
+//         },
+//     },
+// });
 // var myPieChart = new Chart(pieChartCtx, {
 //     type: 'pie',
 //     data: {
@@ -634,108 +727,108 @@ var myBarChart = new ChartBarChart({
 //     },
 // });
 
-var myDoughnutChart = new Chart(doughnutChartCtx, {
-    type: 'doughnut',
-    data: {
-        datasets: [{
-            data: [10, 20, 30],
-            backgroundColor: ["#1f353d", "#f1a648", "#1fda73"],
-        }],
-    },
-    labels: ["Red", "Yellow", "Blue"],
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        position: 'bottom',
-        layout: {
-            padding: {
-                top: 20,
-                bottom: 20,
-            },
-        },
-    },
-});
-var myRadarChart = new Chart(radarChart, {
-    type: 'radar',
-    data: {
-        labels: ["Running", "Swimming", "Eating", "Cycling", "Jumping"],
-        datasets: [
-            {
-                data: [20, 10, 30, 2, 30],
-                borderColor: '#1f7daf',
-                backgroundColor: 'rgba(29, 122, 243, 0.25)',
-                pointBackgroundColor: '#1f7daf',
-                pointHoverRadius: 4,
-                pointRadius: 3,
-                label: "Team 1",
-            },
-            {
-                data: [10, 20, 15, 30, 22],
-                borderColor: '#71f6ac',
-                backgroundColor: 'rgba(113, 206, 202, 0.25)',
-                pointBackgroundColor: '#71f6ac',
-                pointHoverRadius: 4,
-                pointRadius: 3,
-                label: "Team 2",
-            },
-        ],
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            position: "bottom",
-        },
-    },
-});
-var myBubbleChart = new Chart(bubbleChart, {
-    type: "bubble",
-    data: {
-        datasets: [
-            {
-                label: "Car",
-                data: [
-                    { x: 25, y: 17, r: 25 },
-                    { x: 30, y: 25, r: 28 },
-                    { x: 35, y: 30, r: 18 },
-                ],
-                backgroundColor: "#71c7ca",
-            },
-            {
-                label: "Motorcycles",
-                data: [
-                    { x: 10, y: 17, r: 20 },
-                    { x: 30, y: 10, r: 15 },
-                    { x: 35, y: 20, r: 10 },
-                ],
-                backgroundColor: "#1df3f3",
-            },
-        ],
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-            position: "bottom",
-        },
-        scales: {
-            xAxes: [
-                {
-                    ticks: {
-                        beginAtZero: true,
-                    },
-                },
-            ],
-            yAxes: [
-                {
-                    ticks: {
-                        beginAtZero: true,
-                    },
-                },
-            ],
-        },
-    },
-});
+// var myDoughnutChart = new Chart(doughnutChartCtx, {
+//     type: 'doughnut',
+//     data: {
+//         datasets: [{
+//             data: [10, 20, 30],
+//             backgroundColor: ["#1f353d", "#f1a648", "#1fda73"],
+//         }],
+//     },
+//     labels: ["Red", "Yellow", "Blue"],
+//     options: {
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         position: 'bottom',
+//         layout: {
+//             padding: {
+//                 top: 20,
+//                 bottom: 20,
+//             },
+//         },
+//     },
+// });
+// var myRadarChart = new Chart(radarChart, {
+//     type: 'radar',
+//     data: {
+//         labels: ["Running", "Swimming", "Eating", "Cycling", "Jumping"],
+//         datasets: [
+//             {
+//                 data: [20, 10, 30, 2, 30],
+//                 borderColor: '#1f7daf',
+//                 backgroundColor: 'rgba(29, 122, 243, 0.25)',
+//                 pointBackgroundColor: '#1f7daf',
+//                 pointHoverRadius: 4,
+//                 pointRadius: 3,
+//                 label: "Team 1",
+//             },
+//             {
+//                 data: [10, 20, 15, 30, 22],
+//                 borderColor: '#71f6ac',
+//                 backgroundColor: 'rgba(113, 206, 202, 0.25)',
+//                 pointBackgroundColor: '#71f6ac',
+//                 pointHoverRadius: 4,
+//                 pointRadius: 3,
+//                 label: "Team 2",
+//             },
+//         ],
+//     },
+//     options: {
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         legend: {
+//             position: "bottom",
+//         },
+//     },
+// });
+// var myBubbleChart = new Chart(bubbleChart, {
+//     type: "bubble",
+//     data: {
+//         datasets: [
+//             {
+//                 label: "Car",
+//                 data: [
+//                     { x: 25, y: 17, r: 25 },
+//                     { x: 30, y: 25, r: 28 },
+//                     { x: 35, y: 30, r: 18 },
+//                 ],
+//                 backgroundColor: "#71c7ca",
+//             },
+//             {
+//                 label: "Motorcycles",
+//                 data: [
+//                     { x: 10, y: 17, r: 20 },
+//                     { x: 30, y: 10, r: 15 },
+//                     { x: 35, y: 20, r: 10 },
+//                 ],
+//                 backgroundColor: "#1df3f3",
+//             },
+//         ],
+//     },
+//     options: {
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         legend: {
+//             position: "bottom",
+//         },
+//         scales: {
+//             xAxes: [
+//                 {
+//                     ticks: {
+//                         beginAtZero: true,
+//                     },
+//                 },
+//             ],
+//             yAxes: [
+//                 {
+//                     ticks: {
+//                         beginAtZero: true,
+//                     },
+//                 },
+//             ],
+//         },
+//     },
+// });
 
 // var myMultipleLineChart = new Chart(multipleLineChart, {
 //     type: "line",
@@ -874,36 +967,36 @@ var gradientFill3 = htmlLegendsChart.createLinearGradient(500, 0, 100, 0);
 gradientFill3.addColorStop(0, "rgba(253, 175, 75, 0.7)");
 gradientFill3.addColorStop(1, "rgba(253, 196, 120, 0.3)");
 
-var myLineChart = new Chart(lineChart, {
-    type: "line",
-    data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-            label: "Active Cases",
-            borderColor: "#1A4737", // Fixed hex color
-            backgroundColor: "transparent",
-            pointBackgroundColor: "#191F3F", // Fixed hex color
-            data: [144, 420, 430, 550, 330, 453, 380, 434, 568, 610, 700, 901],
-        }],
-    },
-    options: {
-        maintainAspectRatio: false,
-        responsive: true,
-        plugins: {
-            legend: {
-                position: "bottom"
-            },
-            tooltip: {
-                enabled: true,
-                mode: "index",
-                intersect: false,
-            },
-        },
-        layout: {
-            padding: 15
-        }
-    }
-});
+// var myLineChart = new Chart(lineChart, {
+//     type: "line",
+//     data: {
+//         labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+//         datasets: [{
+//             label: "Active Cases",
+//             borderColor: "#1A4737", // Fixed hex color
+//             backgroundColor: "transparent",
+//             pointBackgroundColor: "#191F3F", // Fixed hex color
+//             data: [144, 420, 430, 550, 330, 453, 380, 434, 568, 610, 700, 901],
+//         }],
+//     },
+//     options: {
+//         maintainAspectRatio: false,
+//         responsive: true,
+//         plugins: {
+//             legend: {
+//                 position: "bottom"
+//             },
+//             tooltip: {
+//                 enabled: true,
+//                 mode: "index",
+//                 intersect: false,
+//             },
+//         },
+//         layout: {
+//             padding: 15
+//         }
+//     }
+// });
 var myLegendContainer = document.getElementById("myChartLegend");
 
 // generate HTML legend
