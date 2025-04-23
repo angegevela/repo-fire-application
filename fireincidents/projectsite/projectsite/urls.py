@@ -27,4 +27,9 @@ urlpatterns = [
 
 
     path('stations', views.map_station, name='map-station'),
+    path('fire-incidents/', views.map_incidents, name='map-incidents'),
+
+
+
+
 ]

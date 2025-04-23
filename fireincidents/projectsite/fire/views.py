@@ -272,3 +272,17 @@ def map_station(request):
         'fireStations': fireStations_list,
     }
     return render(request, 'map_station.html', context)
+
+def map_incidents(request):
+    incidents = Incident.objects.select_related('location').all()
+    locations = [
+        {
+            'latitude': str(incident.location.latitude),
+            'longitude': str(incident.location.longitude),
+            'severity': incident.severity_level,
+            'description': incident.description,
+        }
+        for incident in incidents
+        if incident.location.latitude and incident.location.longitude
+    ]
+    return render(request, 'map_incidents.html', {'locations': locations})
