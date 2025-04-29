@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.views.generic.list import ListView
-from .models import Locations, Incident, FireStation
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from .models import Locations, Incident, FireStation, FireTruck
 
+from .forms import FireTruckForm
+from django.urls import reverse_lazy
 
 from django.db import connection
 from django.http import JsonResponse
@@ -286,3 +288,31 @@ def map_incidents(request):
         if incident.location.latitude and incident.location.longitude
     ]
     return render(request, 'map_incidents.html', {'locations': locations})
+
+
+# List view for FireTruck (Read all FireTrucks)
+class FireTruckListView(ListView):
+    model = FireTruck
+    template_name = 'firetruck_list.html'
+    context_object_name = 'firetrucks'
+    paginate_by = '3'
+
+# Create view for FireTruck
+class FireTruckCreateView(CreateView):
+    model = FireTruck
+    form_class = FireTruckForm
+    template_name = 'firetruck_add.html'
+    success_url = reverse_lazy('firetruck_list')
+
+# Update view for FireTruck
+class FireTruckUpdateView(UpdateView):
+    model = FireTruck
+    form_class = FireTruckForm
+    template_name = 'firetruck_edit.html'
+    success_url = reverse_lazy('firetruck_list')
+
+# Delete view for FireTruck
+class FireTruckDeleteView(DeleteView):
+    model = FireTruck
+    template_name = 'firetruck_del.html'
+    success_url = reverse_lazy('firetruck_list')
