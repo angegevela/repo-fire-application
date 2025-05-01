@@ -18,6 +18,9 @@ class Locations(BaseModel):
     address = models.CharField(max_length=150)
     city = models.CharField(max_length=150)  # can be in separate table
     country = models.CharField(max_length=150)  # can be in separate table
+    def __str__(self):
+          return f"{self.name} - {self.address}, {self.city}, {self.country}"
+
 
 
 class Incident(BaseModel):
@@ -41,6 +44,9 @@ class FireStation(BaseModel):
     address = models.CharField(max_length=150)
     city = models.CharField(max_length=150)  # can be in separate table
     country = models.CharField(max_length=150)  # can be in separate table
+    def __str__(self):
+        return f"{self.name}, {self.city}"
+
 
 
 class Firefighters(BaseModel):
@@ -53,9 +59,9 @@ class Firefighters(BaseModel):
         ('Captain', 'Captain'),
         ('Battalion Chief', 'Battalion Chief'),)
     name = models.CharField(max_length=150)
-    rank = models.CharField(max_length=150)
+    station = models.CharField(max_length=150)
     experience_level = models.CharField(max_length=150)
-    station = models.CharField(
+    rank = models.CharField(
         max_length=45, null=True, blank=True, choices=XP_CHOICES)
 
 
