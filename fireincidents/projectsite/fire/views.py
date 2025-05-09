@@ -4,7 +4,7 @@ from .models import Locations, Incident, FireStation, FireTruck, Firefighters, W
 
 from .forms import FireTruckForm,FireFightersForm, IncidentForm, LocationsForm, WheatherConditionsForm, FireStationForm
 from django.urls import reverse_lazy
-
+from django.contrib import messages
 from django.db import connection
 from django.http import JsonResponse
 from django.db.models.functions import ExtractMonth
@@ -348,12 +348,15 @@ class IncidentListView(ListView):
     model = Incident
     template_name = 'incident_list.html'
     context_object_name = 'incidents'
-
 class IncidentCreateView(CreateView):
     model = Incident
     form_class = IncidentForm 
     template_name = 'incident_add.html'
     success_url = reverse_lazy('incidents_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Incident successfully created.')
+        return super().form_valid(form)
 
 class IncidentUpdateView(UpdateView):
     model = Incident
@@ -361,10 +364,18 @@ class IncidentUpdateView(UpdateView):
     template_name = 'incident_edit.html'
     success_url = reverse_lazy('incidents_list')
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Incident successfully updated.')
+        return super().form_valid(form)
+
 class IncidentDeleteView(DeleteView):
     model = Incident
     template_name = 'incident_del.html'
     success_url = reverse_lazy('incidents_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Incident successfully deleted.')
+        return super().delete(request, *args, **kwargs)
 
 
 #Locations
@@ -436,3 +447,6 @@ class WeatherConditionDeleteView(DeleteView):
     model = WeatherConditions
     template_name = 'weathercondition_del.html'
     success_url = reverse_lazy('location_list')
+
+
+
