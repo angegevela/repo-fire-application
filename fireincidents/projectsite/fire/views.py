@@ -9,7 +9,7 @@ from django.db import connection
 from django.http import JsonResponse
 from django.db.models.functions import ExtractMonth
 
-
+from django.db.models import Q
 from django.db.models import Count
 from datetime import datetime
 
@@ -295,7 +295,18 @@ class FireTruckListView(ListView):
     model = FireTruck
     template_name = 'firetruck_list.html'
     context_object_name = 'firetrucks'
-    paginate_by = '3'
+    paginate_by = 3
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return FireTruck.objects.filter(
+                Q(truck_number__icontains=query) |
+                Q(model__icontains=query) |
+                Q(station__name__icontains=query)
+            ).select_related('station')
+        return FireTruck.objects.all().select_related('station')
+
 
 
 class FireTruckCreateView(CreateView):
@@ -336,6 +347,18 @@ class FireFightersListView(ListView):
     context_object_name = 'firefighters'
     paginate_by = 5
 
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            object_list = Firefighters.objects.filter(
+                Q(name__icontains=query) |
+                Q(rank__icontains=query) |
+                Q(experience_level__icontains=query) |
+                Q(station__icontains=query)
+            )
+        else:
+            object_list = Firefighters.objects.all()
+        return object_list
 
 class FireFightersCreateView(CreateView):
     model = Firefighters
@@ -359,8 +382,6 @@ class FireFightersUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-
-
 class FireFightersDeleteView(DeleteView):
     model = Firefighters
     template_name = 'firefighters_del.html'
@@ -375,6 +396,17 @@ class IncidentListView(ListView):
     model = Incident
     template_name = 'incident_list.html'
     context_object_name = 'incidents'
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return Incident.objects.filter(
+                Q(severity_level__icontains=query) |
+                Q(description__icontains=query) |
+                Q(location__name__icontains=query)
+            ).select_related('location')
+        return Incident.objects.all().select_related('location')
+
 class IncidentCreateView(CreateView):
     model = Incident
     form_class = IncidentForm 
@@ -411,6 +443,17 @@ class LocationListView(ListView):
     template_name = 'location_list.html'
     context_object_name = 'locations'
 
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return Locations.objects.filter(
+                Q(name__icontains=query) |
+                Q(address__icontains=query) |
+                Q(city__icontains=query) |
+                Q(country__icontains=query)
+            )
+        return Locations.objects.all()
+
 class LocationCreateView(CreateView):
     model = Locations
     form_class = LocationsForm
@@ -445,6 +488,17 @@ class FireStationListView(ListView):
     template_name = 'firestation_list.html'
     context_object_name = 'firestations'
 
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return FireStation.objects.filter(
+                Q(name__icontains=query) |
+                Q(city__icontains=query) |
+                Q(country__icontains=query)
+            )
+        return FireStation.objects.all()
+
+
 class FireStationCreateView(CreateView):
     model = FireStation
     form_class = FireStationForm
@@ -476,6 +530,18 @@ class WeatherConditionListView(ListView):
     model = WeatherConditions
     template_name = 'weathercondition_list.html'
     context_object_name = 'weatherconditions'
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return WeatherConditions.objects.filter(
+                Q(temperature__icontains=query) |
+                Q(humidity__icontains=query) |
+                Q(wind_speed__icontains=query) |
+                Q(weather_description__icontains=query)
+            ).select_related('incident')
+        return WeatherConditions.objects.all().select_related('incident')
+
 
 class WeatherConditionCreateView(CreateView):
     model = WeatherConditions
