@@ -2,6 +2,15 @@
 {% load static %} 
 
 {% block content %}
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
 <div class="content">
     <div class="container-fluid">
         <h4 class="page-title">Home</h4>
@@ -74,7 +83,7 @@
 <!-- Toast Container -->
 <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080">
   {% for message in messages %}
-    <div class="toast show mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast show mb-2 bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header">
         <strong class="me-auto">Notification</strong>
         <small class="text-muted">Just now</small>
