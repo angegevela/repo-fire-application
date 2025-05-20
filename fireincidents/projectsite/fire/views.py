@@ -9,6 +9,10 @@ from django.db import connection
 from django.http import JsonResponse
 from django.db.models.functions import ExtractMonth
 
+from collections import defaultdict
+import calendar
+
+
 from django.db.models import Q
 from django.db.models import Count
 from datetime import datetime
@@ -37,9 +41,12 @@ def PieCountbySeverity(request):
     with connection.cursor() as cursor:
         cursor.execute(query)
         rows = cursor.fetchall()
-
-    data = {severity: count for severity, count in rows} if rows else {}
-    return JsonResponse({'ok': True})
+    
+    if rows:
+        data = {severity_level: count for severity_level, count in rows} if rows else {}
+    else:
+        data = {}
+    return JsonResponse(data)
 
 def LineCountbyMonth(request):
     current_year = datetime.now().year
@@ -222,42 +229,70 @@ def RadarChart(request):
     }
     return JsonResponse(data)
 def BubbleChart(request):
-    # Simulated data; replace with actual queries if applicable
-    data = {
+     # Count incidents grouped by location
+    location_data = Incident.objects.values(
+        'location__latitude',
+        'location__longitude',
+        'location__name'
+    ).annotate(
+        count=Count('id')
+    ).exclude(
+        location__latitude__isnull=True,
+        location__longitude__isnull=True
+    )
+
+    dataset = []
+
+    for loc in location_data:
+        dataset.append({
+            "x": float(loc['location__longitude']),
+            "y": float(loc['location__latitude']),
+            "r": loc['count'],  # Bubble radius
+            "label": loc['location__name']
+        })
+
+    response_data = {
         "datasets": [
             {
-                "label": "Cars",
-                "data": [
-                    {"x": 10, "y": 20, "r": 15},
-                    {"x": 15, "y": 10, "r": 20},
-                    {"x": 20, "y": 30, "r": 25}
-                ],
-                "backgroundColor": "#71c7ca"
-            },
-            {
-                "label": "Motorcycles",
-                "data": [
-                    {"x": 5, "y": 15, "r": 10},
-                    {"x": 25, "y": 10, "r": 18},
-                    {"x": 30, "y": 25, "r": 22}
-                ],
-                "backgroundColor": "#1df3f3"
+                "label": "Incidents per Location",
+                "data": dataset,
+                "backgroundColor": "#f39c12"
             }
         ]
     }
-    return JsonResponse(data)
-
-
+    return JsonResponse(response_data)
 def barChart(request):
-    data = {
-        "labels": [
-            "Jan", "Feb", "Mar", "Apr",
-            "May", "Jun", "Jul", "Aug",
-            "Sep", "Oct", "Nov", "Dec"
-        ],
-        "data": [12, 9, 15, 20, 14, 17, 22, 19, 13, 11, 16, 18]  
+    query = '''
+    SELECT
+        strftime('%m', fi.date_time) AS month,
+        COUNT(fi.id) AS incident_count
+    FROM
+        fire_incident fi
+    GROUP BY month
+    '''
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+    # Map month numbers to month names
+    month_map = {
+        "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr",
+        "05": "May", "06": "Jun", "07": "Jul", "08": "Aug",
+        "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
     }
-    return JsonResponse(data)
+
+    month_labels = [month_map[str(i).zfill(2)] for i in range(1, 13)]
+    data = {str(i).zfill(2): 0 for i in range(1, 13)}
+    
+    for row in rows:
+        month = row[0]
+        count = row[1]
+        data[month] = count
+
+    return JsonResponse({
+        "labels": month_labels,          
+        "data": [data[m] for m in sorted(data.keys())]  
+    })
 
 #fire incident code view
 def map_station(request):
